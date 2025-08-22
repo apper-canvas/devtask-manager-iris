@@ -119,7 +119,7 @@ setFormData({
 <Select name="projectId" value={formData.projectId} onChange={handleChange}>
                             <option value="">Select a project...</option>
                             {projects?.map((project) => (
-                                <option key={project.id} value={project.id}>
+                                <option key={project.Id} value={project.Id}>
                                     {project.name}
                                 </option>
                             ))}
