@@ -43,7 +43,7 @@ const Dashboard = () => {
     .sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt))
     .find(task => task.status === "inProgress") || tasks[0]
 
-  const recentTaskProject = recentTask ? projects.find(p => p.Id === recentTask.projectId) : null
+const recentTaskProject = recentTask ? projects.find(p => p.Id === recentTask.projectId) : null
 
   const stats = {
     totalTasks: tasks.length,
@@ -79,7 +79,7 @@ const Dashboard = () => {
                   <p className="text-gray-400 text-sm mb-2">{recentTask.description}</p>
                 )}
                 <div className="flex items-center space-x-2 text-xs text-gray-500">
-                  <span>{recentTaskProject?.name || "No Project"}</span>
+<span>{recentTaskProject?.name || "No Project"}</span>
                   <span>•</span>
                   <span>Last updated {format(new Date(recentTask.updatedAt), "MMM d 'at' h:mm a")}</span>
                 </div>
@@ -158,7 +158,7 @@ const Dashboard = () => {
         {recentActivity.length > 0 ? (
           <div className="space-y-4">
             {recentActivity.map(task => {
-              const project = projects.find(p => p.Id === task.projectId)
+const project = projects.find(p => p.Id === task.projectId)
               return (
                 <div key={task.Id} className="flex items-center space-x-4 p-3 rounded-lg hover:bg-surface/50 transition-colors">
                   <div className="w-2 h-2 rounded-full bg-primary flex-shrink-0" />

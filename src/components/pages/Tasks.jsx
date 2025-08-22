@@ -89,7 +89,7 @@ const handleTaskDetailsUpdated = (updatedTask) => {
   }
 
 // Filter out tasks that reference deleted projects
-  const validTasks = tasks.filter(task => {
+const validTasks = tasks.filter(task => {
     if (!task.projectId) return true
     return projects.some(project => project.Id === task.projectId)
 })
@@ -199,7 +199,7 @@ const handleTaskDetailsUpdated = (updatedTask) => {
               className="min-w-[160px]"
             >
               <option value="all">All Projects</option>
-              {projects.map(project => {
+{projects.map(project => {
                 const projectTaskCount = validTasks.filter(task => task.projectId === project.Id).length
                 return (
                   <option key={project.Id} value={project.Id}>
@@ -237,7 +237,7 @@ const handleTaskDetailsUpdated = (updatedTask) => {
             {searchQuery && <span>• Search: "{searchQuery}"</span>}
             {statusFilter !== "all" && <span>• Status: {statusFilter === "inProgress" ? "In Progress" : statusFilter}</span>}
             {priorityFilter !== "all" && <span>• Priority: {priorityFilter}</span>}
-            {projectFilter !== "all" && <span>• Project: {projects.find(p => p.Id.toString() === projectFilter)?.name}</span>}
+{projectFilter !== "all" && <span>• Project: {projects.find(p => p.Id.toString() === projectFilter)?.name}</span>}
           </div>
         )}
       </div>
@@ -245,7 +245,7 @@ const handleTaskDetailsUpdated = (updatedTask) => {
       {/* Tasks List */}
       {filteredTasks.length > 0 ? (
         <div className="grid gap-4">
-          {filteredTasks.map(task => {
+{filteredTasks.map(task => {
             const project = projects.find(p => p.Id === task.projectId)
             return (
 <TaskCard

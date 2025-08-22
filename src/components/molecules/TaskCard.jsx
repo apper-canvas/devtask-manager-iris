@@ -65,7 +65,7 @@ const handleStatusToggle = async (e) => {
             <p className="text-sm text-gray-400 mb-2">{task.description}</p>
           )}
           <div className="flex items-center space-x-2 text-xs text-gray-500">
-            <span>{project?.name || "No Project"}</span>
+<span>{project?.name || "No Project"}</span>
             <span>•</span>
             <span>{format(new Date(task.createdAt), "MMM d")}</span>
           </div>

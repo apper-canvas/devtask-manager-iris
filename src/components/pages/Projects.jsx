@@ -39,7 +39,7 @@ const [projects, setProjects] = useState([])
     }
 }
 
-  const handleProjectAdded = (newProject) => {
+const handleProjectAdded = (newProject) => {
     setProjects(prev => [newProject, ...prev])
     setIsAddModalOpen(false)
     toast.success("Project created successfully!")
@@ -97,7 +97,7 @@ useEffect(() => {
   if (loading) return <Loading message="Loading projects..." />
   if (error) return <Error message={error} onRetry={loadData} />
 
-  const getProjectStats = (projectId) => {
+const getProjectStats = (projectId) => {
     const projectTasks = tasks.filter(task => task.projectId === projectId)
     const completed = projectTasks.filter(task => task.status === "done")
     return {
@@ -165,8 +165,7 @@ useEffect(() => {
 
       <ProjectDetailsModal
         isOpen={isDetailsModalOpen}
-        onClose={() => setIsDetailsModalOpen(false)}
-        project={selectedProject}
+project={selectedProject}
         tasks={selectedProject ? tasks.filter(task => task.projectId === selectedProject.Id) : []}
       />
 

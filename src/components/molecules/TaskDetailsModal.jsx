@@ -280,7 +280,7 @@ onClick={handleSetActive}
                     </label>
                     <Select name="projectId" value={formData.projectId} onChange={handleChange}>
                       <option value="">Select a project...</option>
-                      {projects.map(project => (
+{projects.map(project => (
                         <option key={project.Id} value={project.Id}>
                           {project.name}
                         </option>
@@ -378,7 +378,7 @@ onClick={handleSetActive}
                   {getProject() && (
                     <div>
                       <span className="text-sm font-medium text-gray-400">Project: </span>
-                      <span className="text-white">{getProject().name}</span>
+<span className="text-white">{getProject().name}</span>
                     </div>
                   )}
                 </div>

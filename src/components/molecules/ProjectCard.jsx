@@ -56,7 +56,7 @@ const handleDelete = async (e) => {
               </a>
             </div>
           )}
-          <p className="text-xs text-gray-500">
+<p className="text-xs text-gray-500">
             Created {format(new Date(project.createdAt), "MMM d, yyyy")}
           </p>
         </div>
@@ -66,7 +66,7 @@ const handleDelete = async (e) => {
             className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0"
             style={{ backgroundColor: project.color }}
           >
-            {project.name.charAt(0).toUpperCase()}
+{project.name.charAt(0).toUpperCase()}
           </div>
           
           <div className="flex items-center space-x-1">

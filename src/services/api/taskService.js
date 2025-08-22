@@ -1,150 +1,434 @@
-import tasksData from "@/services/mockData/tasks.json";
-
-// Simulate API delay
-const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+import { toast } from "react-toastify";
 
 class TaskService {
   constructor() {
-    this.tasks = [...tasksData]
-    this.activeTaskId = null
+    // Initialize ApperClient with Project ID and Public Key
+    const { ApperClient } = window.ApperSDK;
+    this.apperClient = new ApperClient({
+      apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
+      apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
+    });
+    this.tableName = 'task_c';
   }
 
   async getAll() {
-    await delay(300)
-    return [...this.tasks]
+    try {
+      const params = {
+        fields: [
+          { field: { Name: "Id" } },
+          { field: { Name: "Name" } },
+          { field: { Name: "title_c" } },
+          { field: { Name: "description_c" } },
+          { field: { Name: "project_id_c" } },
+          { field: { Name: "priority_c" } },
+          { field: { Name: "status_c" } },
+          { field: { Name: "created_at_c" } },
+          { field: { Name: "updated_at_c" } },
+          { field: { Name: "git_branch_c" } },
+          { field: { Name: "code_snippet_c" } },
+          { field: { Name: "resource_links_c" } }
+        ],
+        orderBy: [
+          {
+            fieldName: "Id",
+            sorttype: "DESC"
+          }
+        ],
+        pagingInfo: {
+          limit: 100,
+          offset: 0
+        }
+      };
+
+      const response = await this.apperClient.fetchRecords(this.tableName, params);
+      
+      if (!response.success) {
+        console.error(response.message);
+        toast.error(response.message);
+        return [];
+      }
+
+      if (!response.data || response.data.length === 0) {
+        return [];
+      }
+
+      // Transform to match UI expectations
+      return response.data.map(task => ({
+        Id: task.Id,
+        title: task.title_c || task.Name,
+        description: task.description_c,
+        projectId: task.project_id_c?.Id || task.project_id_c,
+        priority: task.priority_c,
+        status: task.status_c,
+        createdAt: task.created_at_c,
+        updatedAt: task.updated_at_c,
+        gitBranch: task.git_branch_c,
+        codeSnippet: task.code_snippet_c,
+        resourceLinks: task.resource_links_c
+      }));
+    } catch (error) {
+      if (error?.response?.data?.message) {
+        console.error("Error fetching tasks:", error?.response?.data?.message);
+        toast.error(error?.response?.data?.message);
+      } else {
+        console.error(error);
+      }
+      return [];
+    }
   }
 
   async getById(id) {
-    await delay(200)
-    const task = this.tasks.find(task => task.Id === parseInt(id))
-    if (!task) {
-      throw new Error("Task not found")
+    try {
+      const params = {
+        fields: [
+          { field: { Name: "Id" } },
+          { field: { Name: "Name" } },
+          { field: { Name: "title_c" } },
+          { field: { Name: "description_c" } },
+          { field: { Name: "project_id_c" } },
+          { field: { Name: "priority_c" } },
+          { field: { Name: "status_c" } },
+          { field: { Name: "created_at_c" } },
+          { field: { Name: "updated_at_c" } },
+          { field: { Name: "git_branch_c" } },
+          { field: { Name: "code_snippet_c" } },
+          { field: { Name: "resource_links_c" } }
+        ]
+      };
+
+      const response = await this.apperClient.getRecordById(this.tableName, id, params);
+      
+      if (!response || !response.data) {
+        return null;
+      }
+
+      const task = response.data;
+      // Transform to match UI expectations
+      return {
+        Id: task.Id,
+        title: task.title_c || task.Name,
+        description: task.description_c,
+        projectId: task.project_id_c?.Id || task.project_id_c,
+        priority: task.priority_c,
+        status: task.status_c,
+        createdAt: task.created_at_c,
+        updatedAt: task.updated_at_c,
+        gitBranch: task.git_branch_c,
+        codeSnippet: task.code_snippet_c,
+        resourceLinks: task.resource_links_c
+      };
+    } catch (error) {
+      if (error?.response?.data?.message) {
+        console.error(`Error fetching task with ID ${id}:`, error?.response?.data?.message);
+      } else {
+        console.error(error);
+      }
+      return null;
     }
-    return { ...task }
   }
 
   async create(taskData) {
-    await delay(400)
-    const newTask = {
-      ...taskData,
-      Id: Math.max(...this.tasks.map(t => t.Id), 0) + 1
+    try {
+      const params = {
+        records: [{
+          Name: taskData.title,
+          title_c: taskData.title,
+          description_c: taskData.description,
+          project_id_c: taskData.projectId ? parseInt(taskData.projectId) : null,
+          priority_c: taskData.priority,
+          status_c: taskData.status,
+          created_at_c: new Date().toISOString(),
+          updated_at_c: new Date().toISOString(),
+          git_branch_c: taskData.gitBranch || null,
+          code_snippet_c: taskData.codeSnippet || null,
+          resource_links_c: taskData.resourceLinks || null
+        }]
+      };
+
+      const response = await this.apperClient.createRecord(this.tableName, params);
+      
+      if (!response.success) {
+        console.error(response.message);
+        toast.error(response.message);
+        return null;
+      }
+
+      if (response.results) {
+        const successfulRecords = response.results.filter(result => result.success);
+        const failedRecords = response.results.filter(result => !result.success);
+        
+        if (failedRecords.length > 0) {
+          console.error(`Failed to create task ${failedRecords.length} records:${JSON.stringify(failedRecords)}`);
+          
+          failedRecords.forEach(record => {
+            record.errors?.forEach(error => {
+              toast.error(`${error.fieldLabel}: ${error}`);
+            });
+            if (record.message) toast.error(record.message);
+          });
+        }
+        
+        if (successfulRecords.length > 0) {
+          const createdTask = successfulRecords[0].data;
+          // Transform to match UI expectations
+          return {
+            Id: createdTask.Id,
+            title: createdTask.title_c || createdTask.Name,
+            description: createdTask.description_c,
+            projectId: createdTask.project_id_c?.Id || createdTask.project_id_c,
+            priority: createdTask.priority_c,
+            status: createdTask.status_c,
+            createdAt: createdTask.created_at_c,
+            updatedAt: createdTask.updated_at_c,
+            gitBranch: createdTask.git_branch_c,
+            codeSnippet: createdTask.code_snippet_c,
+            resourceLinks: createdTask.resource_links_c
+          };
+        }
+      }
+    } catch (error) {
+      if (error?.response?.data?.message) {
+        console.error("Error creating task:", error?.response?.data?.message);
+        toast.error(error?.response?.data?.message);
+      } else {
+        console.error(error);
+      }
     }
-    this.tasks.unshift(newTask)
-    return { ...newTask }
+    return null;
   }
 
   async update(id, taskData) {
-    await delay(300)
-    const index = this.tasks.findIndex(task => task.Id === parseInt(id))
-    if (index === -1) {
-      throw new Error("Task not found")
+    try {
+      const params = {
+        records: [{
+          Id: parseInt(id),
+          Name: taskData.title,
+          title_c: taskData.title,
+          description_c: taskData.description,
+          project_id_c: taskData.projectId ? parseInt(taskData.projectId) : null,
+          priority_c: taskData.priority,
+          status_c: taskData.status,
+          updated_at_c: new Date().toISOString(),
+          git_branch_c: taskData.gitBranch || null,
+          code_snippet_c: taskData.codeSnippet || null,
+          resource_links_c: taskData.resourceLinks || null
+        }]
+      };
+
+      const response = await this.apperClient.updateRecord(this.tableName, params);
+      
+      if (!response.success) {
+        console.error(response.message);
+        toast.error(response.message);
+        return null;
+      }
+
+      if (response.results) {
+        const successfulUpdates = response.results.filter(result => result.success);
+        const failedUpdates = response.results.filter(result => !result.success);
+        
+        if (failedUpdates.length > 0) {
+          console.error(`Failed to update task ${failedUpdates.length} records:${JSON.stringify(failedUpdates)}`);
+          
+          failedUpdates.forEach(record => {
+            record.errors?.forEach(error => {
+              toast.error(`${error.fieldLabel}: ${error}`);
+            });
+            if (record.message) toast.error(record.message);
+          });
+        }
+        
+        if (successfulUpdates.length > 0) {
+          const updatedTask = successfulUpdates[0].data;
+          // Transform to match UI expectations
+          return {
+            Id: updatedTask.Id,
+            title: updatedTask.title_c || updatedTask.Name,
+            description: updatedTask.description_c,
+            projectId: updatedTask.project_id_c?.Id || updatedTask.project_id_c,
+            priority: updatedTask.priority_c,
+            status: updatedTask.status_c,
+            createdAt: updatedTask.created_at_c,
+            updatedAt: updatedTask.updated_at_c,
+            gitBranch: updatedTask.git_branch_c,
+            codeSnippet: updatedTask.code_snippet_c,
+            resourceLinks: updatedTask.resource_links_c
+          };
+        }
+      }
+    } catch (error) {
+      if (error?.response?.data?.message) {
+        console.error("Error updating task:", error?.response?.data?.message);
+        toast.error(error?.response?.data?.message);
+      } else {
+        console.error(error);
+      }
     }
-    this.tasks[index] = { ...taskData, Id: parseInt(id) }
-    return { ...this.tasks[index] }
+    return null;
   }
 
-async delete(id) {
-    await delay(250)
-    const index = this.tasks.findIndex(task => task.Id === parseInt(id))
-    if (index === -1) {
-      throw new Error("Task not found")
+  async delete(id) {
+    try {
+      const params = {
+        RecordIds: [parseInt(id)]
+      };
+
+      const response = await this.apperClient.deleteRecord(this.tableName, params);
+      
+      if (!response.success) {
+        console.error(response.message);
+        toast.error(response.message);
+        return false;
+      }
+
+      if (response.results) {
+        const successfulDeletions = response.results.filter(result => result.success);
+        const failedDeletions = response.results.filter(result => !result.success);
+        
+        if (failedDeletions.length > 0) {
+          console.error(`Failed to delete task ${failedDeletions.length} records:${JSON.stringify(failedDeletions)}`);
+          
+          failedDeletions.forEach(record => {
+            if (record.message) toast.error(record.message);
+          });
+        }
+        
+        return successfulDeletions.length > 0;
+      }
+    } catch (error) {
+      if (error?.response?.data?.message) {
+        console.error("Error deleting task:", error?.response?.data?.message);
+        toast.error(error?.response?.data?.message);
+      } else {
+        console.error(error);
+      }
     }
-    const deletedTask = this.tasks.splice(index, 1)[0]
-    return { ...deletedTask }
+    return false;
   }
 
   async deleteByProjectId(projectId) {
-    await delay(250)
-    const tasksToDelete = this.tasks.filter(task => task.projectId === parseInt(projectId))
-    this.tasks = this.tasks.filter(task => task.projectId !== parseInt(projectId))
-    return tasksToDelete
-  }
-async setActive(id) {
-    await delay(200)
-    const taskId = parseInt(id)
-    const task = this.tasks.find(task => task.Id === taskId)
-    if (!task) {
-      throw new Error("Task not found")
+    try {
+      // First, get all tasks for this project
+      const params = {
+        fields: [
+          { field: { Name: "Id" } }
+        ],
+        where: [
+          {
+            FieldName: "project_id_c",
+            Operator: "EqualTo",
+            Values: [parseInt(projectId)]
+          }
+        ]
+      };
+
+      const response = await this.apperClient.fetchRecords(this.tableName, params);
+      
+      if (!response.success || !response.data || response.data.length === 0) {
+        return [];
+      }
+
+      // Delete all tasks
+      const taskIds = response.data.map(task => task.Id);
+      const deleteParams = {
+        RecordIds: taskIds
+      };
+
+      const deleteResponse = await this.apperClient.deleteRecord(this.tableName, deleteParams);
+      
+      if (!deleteResponse.success) {
+        console.error(deleteResponse.message);
+        return [];
+      }
+
+      return response.data;
+    } catch (error) {
+      if (error?.response?.data?.message) {
+        console.error("Error deleting tasks by project ID:", error?.response?.data?.message);
+      } else {
+        console.error(error);
+      }
+      return [];
     }
-    
-    // Remove active status from all tasks
-    this.tasks.forEach(task => {
-      task.isActive = false
-    })
-    
-    // Set the selected task as active
-    const index = this.tasks.findIndex(task => task.Id === taskId)
-    this.tasks[index] = { ...this.tasks[index], isActive: true }
-    this.activeTaskId = taskId
-    
-    return { ...this.tasks[index] }
+  }
+
+  async setActive(id) {
+    // Note: Active task functionality may need custom implementation
+    // For now, we'll just update the task status to inProgress
+    try {
+      const task = await this.getById(id);
+      if (task) {
+        return await this.update(id, {
+          ...task,
+          status: 'inProgress',
+          isActive: true
+        });
+      }
+      return null;
+    } catch (error) {
+      console.error("Error setting task as active:", error);
+      return null;
+    }
   }
 
   async getActiveTask() {
-    await delay(100)
-return this.tasks.find(task => task.isActive) || null
-  }
+    // This would need custom implementation based on requirements
+    // For now, return the most recently updated in-progress task
+    try {
+      const params = {
+        fields: [
+          { field: { Name: "Id" } },
+          { field: { Name: "Name" } },
+          { field: { Name: "title_c" } },
+          { field: { Name: "description_c" } },
+          { field: { Name: "project_id_c" } },
+          { field: { Name: "priority_c" } },
+          { field: { Name: "status_c" } },
+          { field: { Name: "created_at_c" } },
+          { field: { Name: "updated_at_c" } }
+        ],
+        where: [
+          {
+            FieldName: "status_c",
+            Operator: "EqualTo",
+            Values: ["inProgress"]
+          }
+        ],
+        orderBy: [
+          {
+            fieldName: "updated_at_c",
+            sorttype: "DESC"
+          }
+        ],
+        pagingInfo: {
+          limit: 1,
+          offset: 0
+        }
+      };
 
-  // Filtering methods
-  async filter({ search = '', status = 'all', priority = 'all', projectId = 'all' }) {
-    await delay(200)
-    let filteredTasks = [...this.tasks]
+      const response = await this.apperClient.fetchRecords(this.tableName, params);
+      
+      if (!response.success || !response.data || response.data.length === 0) {
+        return null;
+      }
 
-    // Search filter
-    if (search.trim()) {
-      const searchLower = search.toLowerCase()
-      filteredTasks = filteredTasks.filter(task => 
-        task.title.toLowerCase().includes(searchLower) ||
-        (task.description && task.description.toLowerCase().includes(searchLower))
-      )
+      const task = response.data[0];
+      return {
+        Id: task.Id,
+        title: task.title_c || task.Name,
+        description: task.description_c,
+        projectId: task.project_id_c?.Id || task.project_id_c,
+        priority: task.priority_c,
+        status: task.status_c,
+        createdAt: task.created_at_c,
+        updatedAt: task.updated_at_c,
+        isActive: true
+      };
+    } catch (error) {
+      console.error("Error getting active task:", error);
+      return null;
     }
-
-    // Status filter
-    if (status !== 'all') {
-      filteredTasks = filteredTasks.filter(task => task.status === status)
-    }
-
-    // Priority filter
-    if (priority !== 'all') {
-      filteredTasks = filteredTasks.filter(task => task.priority === priority)
-    }
-
-    // Project filter
-    if (projectId !== 'all') {
-      filteredTasks = filteredTasks.filter(task => task.projectId === parseInt(projectId))
-    }
-
-    return filteredTasks
-  }
-
-  async searchTasks(query) {
-    await delay(200)
-    if (!query.trim()) return [...this.tasks]
-    
-    const searchLower = query.toLowerCase()
-    return this.tasks.filter(task => 
-      task.title.toLowerCase().includes(searchLower) ||
-      (task.description && task.description.toLowerCase().includes(searchLower))
-    )
-  }
-
-  async getTasksByStatus(status) {
-    await delay(200)
-    if (status === 'all') return [...this.tasks]
-    return this.tasks.filter(task => task.status === status)
-  }
-
-  async getTasksByPriority(priority) {
-    await delay(200)
-    if (priority === 'all') return [...this.tasks]
-    return this.tasks.filter(task => task.priority === priority)
-  }
-
-  async getTasksByProject(projectId) {
-    await delay(200)
-    if (projectId === 'all') return [...this.tasks]
-    return this.tasks.filter(task => task.projectId === parseInt(projectId))
   }
 }
 
-export const taskService = new TaskService()
+export const taskService = new TaskService();

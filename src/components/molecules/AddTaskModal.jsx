@@ -3,9 +3,9 @@ import { toast } from "react-toastify";
 import { taskService } from "@/services/api/taskService";
 import ApperIcon from "@/components/ApperIcon";
 import Textarea from "@/components/atoms/Textarea";
-import Input from "@/components/atoms/Input";
-import Button from "@/components/atoms/Button";
 import Select from "@/components/atoms/Select";
+import Button from "@/components/atoms/Button";
+import Input from "@/components/atoms/Input";
 
 const AddTaskModal = ({ isOpen, onClose, projects, onTaskAdded }) => {
 const [formData, setFormData] = useState({
@@ -116,11 +116,13 @@ setFormData({
                     <div>
                         <label className="block text-sm font-medium text-gray-300 mb-2">Project
                                           </label>
-                        <Select name="projectId" value={formData.projectId} onChange={handleChange}>
+<Select name="projectId" value={formData.projectId} onChange={handleChange}>
                             <option value="">Select a project...</option>
-                            {projects.map(project => <option key={project.Id} value={project.Id}>
-                                {project.name}
-                            </option>)}
+                            {projects?.map((project) => (
+                                <option key={project.id} value={project.id}>
+                                    {project.name}
+                                </option>
+                            ))}
                         </Select>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
