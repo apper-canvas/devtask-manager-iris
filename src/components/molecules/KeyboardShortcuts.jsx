@@ -17,40 +17,40 @@ const shortcutCategories = [
       title: 'Navigation',
       icon: 'Navigation',
       shortcuts: [
-        { key: '?', description: 'Show/hide keyboard shortcuts' },
-        { key: 'Esc', description: 'Close modal or cancel action' },
-        { key: 'Alt + H', description: 'Go to Dashboard' },
-        { key: 'Alt + S', description: 'Quick search (coming soon)' }
+        { key: '?', description: 'Show/hide keyboard shortcuts', active: true },
+        { key: 'Esc', description: 'Close modal or cancel action', active: true },
+        { key: 'Alt + H', description: 'Go to Dashboard', active: true },
+        { key: 'Alt + T', description: 'Go to Tasks page', active: true },
+        { key: 'Alt + P', description: 'Go to Projects page', active: true },
+        { key: 'Alt + S', description: 'Quick search', active: false, comingSoon: true }
       ]
     },
     {
       title: 'Tasks',
       icon: 'CheckSquare',
       shortcuts: [
-        { key: 'Alt + N', description: 'Create new task' },
-        { key: 'Alt + E', description: 'Edit selected task' },
-        { key: 'Alt + D', description: 'Delete selected task' },
-        { key: 'Alt + T', description: 'Go to Tasks page' },
-        { key: 'Alt + F', description: 'Filter tasks' }
+        { key: 'Alt + N', description: 'Create new task', active: false, info: true },
+        { key: 'Alt + E', description: 'Edit selected task', active: false, info: true },
+        { key: 'Alt + D', description: 'Delete selected task', active: false, info: true },
+        { key: 'Alt + F', description: 'Filter tasks', active: false, info: true }
       ]
     },
     {
       title: 'Projects',
       icon: 'FolderOpen',
       shortcuts: [
-        { key: 'Alt + Shift + N', description: 'Create new project' },
-        { key: 'Alt + Shift + E', description: 'Edit selected project' },
-        { key: 'Alt + P', description: 'Go to Projects page' },
-        { key: 'Alt + I', description: 'View project details' },
-        { key: 'Alt + G', description: 'Open project repository' }
+        { key: 'Alt + Shift + N', description: 'Create new project', active: false, info: true },
+        { key: 'Alt + Shift + E', description: 'Edit selected project', active: false, info: true },
+        { key: 'Alt + I', description: 'View project details', active: false, info: true },
+        { key: 'Alt + G', description: 'Open project repository', active: false, info: true }
       ]
     },
     {
       title: 'General',
       icon: 'Settings',
       shortcuts: [
-        { key: 'Alt + R', description: 'Refresh data' },
-        { key: 'Alt + /', description: 'Toggle help documentation' }
+        { key: 'Alt + R', description: 'Refresh application', active: true },
+        { key: 'Alt + /', description: 'Toggle help documentation', active: false, comingSoon: true }
       ]
     }
   ]
@@ -96,7 +96,7 @@ const shortcutCategories = [
                 <span className="text-sm font-medium text-gray-300">Platform: {isMac ? 'macOS' : 'Windows/Linux'}</span>
               </div>
 <p className="text-xs text-gray-400">
-                Shortcuts use Alt key combinations to avoid conflicts with browser shortcuts. Some shortcuts may be coming in future updates.
+                Navigation shortcuts work immediately. Action shortcuts show helpful info messages. Alt key combinations avoid browser conflicts.
               </p>
             </div>
 
@@ -110,13 +110,32 @@ const shortcutCategories = [
                       <h3 className="font-semibold text-white">{category.title}</h3>
                     </div>
                   </div>
-                  <div className="p-4 space-y-3">
+<div className="p-4 space-y-3">
                     {category.shortcuts.map((shortcut, shortcutIndex) => (
                       <div key={shortcutIndex} className="flex items-center justify-between">
-                        <span className="text-sm text-gray-300">{shortcut.description}</span>
+                        <div className="flex items-center space-x-2">
+                          <span className={cn(
+                            "text-sm",
+                            shortcut.active ? "text-gray-300" : "text-gray-500"
+                          )}>
+                            {shortcut.description}
+                          </span>
+                          {shortcut.comingSoon && (
+                            <span className="px-2 py-0.5 text-xs bg-accent/20 text-accent rounded-full">
+                              Soon
+                            </span>
+                          )}
+                          {shortcut.info && (
+                            <span className="px-2 py-0.5 text-xs bg-info/20 text-info rounded-full">
+                              Info
+                            </span>
+                          )}
+                        </div>
                         <kbd className={cn(
-                          "px-2 py-1 text-xs font-mono bg-gray-800 border border-gray-600 rounded",
-                          "text-gray-300 shadow-sm"
+                          "px-2 py-1 text-xs font-mono border rounded shadow-sm",
+                          shortcut.active 
+                            ? "bg-gray-800 border-gray-600 text-gray-300" 
+                            : "bg-gray-900 border-gray-700 text-gray-500"
                         )}>
                           {shortcut.key}
                         </kbd>
@@ -133,11 +152,11 @@ const shortcutCategories = [
                 <ApperIcon name="Lightbulb" size={16} className="text-accent mt-0.5 flex-shrink-0" />
                 <div>
                   <h4 className="font-medium text-white mb-1">Pro Tips</h4>
-                  <ul className="text-sm text-gray-300 space-y-1">
+<ul className="text-sm text-gray-300 space-y-1">
                     <li>• Press <kbd className="px-1 py-0.5 text-xs bg-gray-800 rounded">?</kbd> anytime to toggle this help overlay</li>
-                    <li>• Most shortcuts work from any page in the application</li>
+                    <li>• Navigation shortcuts (Alt+H, Alt+T, Alt+P) work from any page</li>
+                    <li>• Action shortcuts provide contextual feedback and guidance</li>
                     <li>• Use <kbd className="px-1 py-0.5 text-xs bg-gray-800 rounded">Esc</kbd> to quickly close dialogs and modals</li>
-                    <li>• Some advanced shortcuts are planned for future releases</li>
                   </ul>
                 </div>
               </div>
