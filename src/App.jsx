@@ -37,60 +37,52 @@ function App() {
         
         switch(e.key.toLowerCase()) {
           // Navigation shortcuts
-          case 'h':
+case 'h':
             window.location.href = '/';
-            toast.success('Navigated to Dashboard');
             break;
           case 't':
             window.location.href = '/tasks';
-            toast.success('Navigated to Tasks');
             break;
           case 'p':
             window.location.href = '/projects';
-            toast.success('Navigated to Projects');
             break;
           case 's':
-            toast.info('Quick search coming soon!');
+            // Quick search coming soon - functionality can be added here
             break;
           case 'r':
             window.location.reload();
-            toast.success('Refreshing application...');
             break;
           case '/':
-            toast.info('Help documentation coming soon!');
+            // Help documentation coming soon - functionality can be added here
             break;
           case 'n':
             if (e.shiftKey) {
-              // Alt + Shift + N for new project
-              toast.info('New project shortcut - navigate to Projects page to create');
+              // Alt + Shift + N for new project - functionality can be added here
             } else {
-              // Alt + N for new task
-              toast.info('New task shortcut - navigate to Tasks page to create');
+              // Alt + N for new task - functionality can be added here
             }
             break;
           case 'e':
             if (e.shiftKey) {
-              // Alt + Shift + E for edit project
-              toast.info('Edit project shortcut - select a project first');
+              // Alt + Shift + E for edit project - functionality can be added here
             } else {
-              // Alt + E for edit task
-              toast.info('Edit task shortcut - select a task first');
+              // Alt + E for edit task - functionality can be added here
             }
             break;
           case 'd':
-            toast.info('Delete shortcut - select an item first');
+            // Delete shortcut - functionality can be added here
             break;
           case 'f':
-            toast.info('Filter shortcut available on Tasks page');
+            // Filter shortcut - functionality can be added here
             break;
           case 'i':
-            toast.info('View details shortcut - select a project first');
+            // View details shortcut - functionality can be added here
             break;
           case 'g':
-            toast.info('Open repository shortcut - select a project first');
+            // Open repository shortcut - functionality can be added here
             break;
           default:
-            // Don't show toast for unhandled combinations
+            // Unhandled key combinations
             break;
         }
       }
