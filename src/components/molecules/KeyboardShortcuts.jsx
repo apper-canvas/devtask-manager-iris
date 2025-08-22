@@ -12,49 +12,45 @@ const KeyboardShortcuts = ({ isOpen, onClose }) => {
   const modifierKey = isMac ? '⌘' : 'Ctrl'
   const modifierText = isMac ? 'Cmd' : 'Ctrl'
 
-  const shortcutCategories = [
+const shortcutCategories = [
     {
       title: 'Navigation',
       icon: 'Navigation',
       shortcuts: [
         { key: '?', description: 'Show/hide keyboard shortcuts' },
         { key: 'Esc', description: 'Close modal or cancel action' },
-        { key: 'Home', description: 'Go to Dashboard' },
-        { key: 'F12', description: 'Project overview (Projects page)' },
-        { key: `${modifierKey} + K`, description: 'Quick search (coming soon)' }
+        { key: 'Alt + H', description: 'Go to Dashboard' },
+        { key: 'Alt + S', description: 'Quick search (coming soon)' }
       ]
     },
     {
       title: 'Tasks',
       icon: 'CheckSquare',
       shortcuts: [
-        { key: `${modifierKey} + N`, description: 'Create new task' },
-        { key: `${modifierKey} + E`, description: 'Edit selected task' },
-        { key: `${modifierKey} + D`, description: 'Delete selected task' },
-        { key: 'T', description: 'Go to Tasks page' },
-        { key: `${modifierKey} + F`, description: 'Filter tasks' }
+        { key: 'Alt + N', description: 'Create new task' },
+        { key: 'Alt + E', description: 'Edit selected task' },
+        { key: 'Alt + D', description: 'Delete selected task' },
+        { key: 'Alt + T', description: 'Go to Tasks page' },
+        { key: 'Alt + F', description: 'Filter tasks' }
       ]
     },
     {
       title: 'Projects',
       icon: 'FolderOpen',
       shortcuts: [
-        { key: `${modifierKey} + Shift + N`, description: 'Create new project' },
-        { key: `${modifierKey} + Shift + E`, description: 'Edit selected project' },
-        { key: 'P', description: 'Go to Projects page' },
-        { key: `${modifierKey} + I`, description: 'View project details' },
-        { key: `${modifierKey} + G`, description: 'Open project repository' }
+        { key: 'Alt + Shift + N', description: 'Create new project' },
+        { key: 'Alt + Shift + E', description: 'Edit selected project' },
+        { key: 'Alt + P', description: 'Go to Projects page' },
+        { key: 'Alt + I', description: 'View project details' },
+        { key: 'Alt + G', description: 'Open project repository' }
       ]
     },
     {
       title: 'General',
       icon: 'Settings',
       shortcuts: [
-        { key: `${modifierKey} + S`, description: 'Save current changes' },
-        { key: `${modifierKey} + Z`, description: 'Undo last action' },
-        { key: `${modifierKey} + Shift + Z`, description: 'Redo last action' },
-        { key: `${modifierKey} + R`, description: 'Refresh data' },
-        { key: `${modifierKey} + /`, description: 'Toggle help documentation' }
+        { key: 'Alt + R', description: 'Refresh data' },
+        { key: 'Alt + /', description: 'Toggle help documentation' }
       ]
     }
   ]
@@ -99,8 +95,8 @@ const KeyboardShortcuts = ({ isOpen, onClose }) => {
                 <ApperIcon name="Info" size={16} className="text-info" />
                 <span className="text-sm font-medium text-gray-300">Platform: {isMac ? 'macOS' : 'Windows/Linux'}</span>
               </div>
-              <p className="text-xs text-gray-400">
-                Shortcuts shown with {modifierText} key. Some shortcuts may be coming in future updates.
+<p className="text-xs text-gray-400">
+                Shortcuts use Alt key combinations to avoid conflicts with browser shortcuts. Some shortcuts may be coming in future updates.
               </p>
             </div>
 
