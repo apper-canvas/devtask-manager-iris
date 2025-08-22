@@ -5,7 +5,8 @@ import Card from '@/components/atoms/Card'
 import { cn } from '@/utils/cn'
 
 const KeyboardShortcuts = ({ isOpen, onClose }) => {
-  if (!isOpen) return null
+// Keyboard shortcuts have been disabled
+  return null
 
   // Detect platform for modifier key display
   const isMac = typeof navigator !== 'undefined' && navigator.platform.toUpperCase().indexOf('MAC') >= 0

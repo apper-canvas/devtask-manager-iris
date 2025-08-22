@@ -10,10 +10,8 @@ import Error from "@/components/ui/Error"
 import Empty from "@/components/ui/Empty"
 import { taskService } from "@/services/api/taskService"
 import { projectService } from "@/services/api/projectService"
-import { useKeyboardShortcuts } from "@/App"
 
 const Tasks = () => {
-  const { registerShortcut, unregisterShortcut } = useKeyboardShortcuts();
 const [tasks, setTasks] = useState([])
   const [projects, setProjects] = useState([])
   const [loading, setLoading] = useState(true)
@@ -53,32 +51,6 @@ useEffect(() => {
     return () => window.removeEventListener('focus', handleFocus)
   }, [])
 
-  // Register keyboard shortcuts
-  useEffect(() => {
-    const handleFilterToggle = () => {
-      // Cycle through filters: all -> todo -> inProgress -> done -> all
-      const filters = ['all', 'todo', 'inProgress', 'done'];
-      const currentIndex = filters.indexOf(filter);
-      const nextIndex = (currentIndex + 1) % filters.length;
-      setFilter(filters[nextIndex]);
-      
-      const filterNames = {
-        'all': 'All Tasks',
-        'todo': 'To Do Tasks', 
-        'inProgress': 'In Progress Tasks',
-        'done': 'Done Tasks'
-      };
-      toast.success(`Filter changed to: ${filterNames[filters[nextIndex]]}`);
-    };
-
-    registerShortcut('openAddTask', () => setIsAddModalOpen(true));
-    registerShortcut('openFilter', handleFilterToggle);
-    
-    return () => {
-      unregisterShortcut('openAddTask');
-      unregisterShortcut('openFilter');
-    };
-  }, [registerShortcut, unregisterShortcut, filter]);
 const handleTaskAdded = (newTask) => {
     setTasks(prev => [newTask, ...prev])
   }
