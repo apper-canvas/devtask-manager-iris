@@ -1,7 +1,7 @@
-import tasksData from "@/services/mockData/tasks.json"
+import tasksData from "@/services/mockData/tasks.json";
 
 // Simulate API delay
-const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms))
+const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
 class TaskService {
   constructor() {
@@ -82,7 +82,68 @@ async setActive(id) {
 
   async getActiveTask() {
     await delay(100)
-    return this.tasks.find(task => task.isActive) || null
+return this.tasks.find(task => task.isActive) || null
+  }
+
+  // Filtering methods
+  async filter({ search = '', status = 'all', priority = 'all', projectId = 'all' }) {
+    await delay(200)
+    let filteredTasks = [...this.tasks]
+
+    // Search filter
+    if (search.trim()) {
+      const searchLower = search.toLowerCase()
+      filteredTasks = filteredTasks.filter(task => 
+        task.title.toLowerCase().includes(searchLower) ||
+        (task.description && task.description.toLowerCase().includes(searchLower))
+      )
+    }
+
+    // Status filter
+    if (status !== 'all') {
+      filteredTasks = filteredTasks.filter(task => task.status === status)
+    }
+
+    // Priority filter
+    if (priority !== 'all') {
+      filteredTasks = filteredTasks.filter(task => task.priority === priority)
+    }
+
+    // Project filter
+    if (projectId !== 'all') {
+      filteredTasks = filteredTasks.filter(task => task.projectId === parseInt(projectId))
+    }
+
+    return filteredTasks
+  }
+
+  async searchTasks(query) {
+    await delay(200)
+    if (!query.trim()) return [...this.tasks]
+    
+    const searchLower = query.toLowerCase()
+    return this.tasks.filter(task => 
+      task.title.toLowerCase().includes(searchLower) ||
+      (task.description && task.description.toLowerCase().includes(searchLower))
+    )
+  }
+
+  async getTasksByStatus(status) {
+    await delay(200)
+    if (status === 'all') return [...this.tasks]
+    return this.tasks.filter(task => task.status === status)
+  }
+
+  async getTasksByPriority(priority) {
+    await delay(200)
+    if (priority === 'all') return [...this.tasks]
+    return this.tasks.filter(task => task.priority === priority)
+  }
+
+  async getTasksByProject(projectId) {
+    await delay(200)
+    if (projectId === 'all') return [...this.tasks]
+    return this.tasks.filter(task => task.projectId === parseInt(projectId))
   }
 }
 
