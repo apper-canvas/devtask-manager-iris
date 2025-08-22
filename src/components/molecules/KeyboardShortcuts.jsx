@@ -29,20 +29,20 @@ const shortcutCategories = [
       title: 'Tasks',
       icon: 'CheckSquare',
       shortcuts: [
-        { key: 'Alt + N', description: 'Create new task', active: false, info: true },
-        { key: 'Alt + E', description: 'Edit selected task', active: false, info: true },
-        { key: 'Alt + D', description: 'Delete selected task', active: false, info: true },
-        { key: 'Alt + F', description: 'Filter tasks', active: false, info: true }
+        { key: 'Alt + N', description: 'Create new task', active: true },
+        { key: 'Alt + E', description: 'Edit selected task', active: true, contextual: true },
+        { key: 'Alt + D', description: 'Delete selected task', active: true, contextual: true },
+        { key: 'Alt + F', description: 'Cycle task filters', active: true }
       ]
     },
     {
       title: 'Projects',
       icon: 'FolderOpen',
       shortcuts: [
-        { key: 'Alt + Shift + N', description: 'Create new project', active: false, info: true },
-        { key: 'Alt + Shift + E', description: 'Edit selected project', active: false, info: true },
-        { key: 'Alt + I', description: 'View project details', active: false, info: true },
-        { key: 'Alt + G', description: 'Open project repository', active: false, info: true }
+        { key: 'Alt + Shift + N', description: 'Create new project', active: true },
+        { key: 'Alt + Shift + E', description: 'Edit selected project', active: true, contextual: true },
+        { key: 'Alt + I', description: 'View project details', active: true, contextual: true },
+        { key: 'Alt + G', description: 'Open project repository', active: true, contextual: true }
       ]
     },
     {
@@ -96,7 +96,7 @@ const shortcutCategories = [
                 <span className="text-sm font-medium text-gray-300">Platform: {isMac ? 'macOS' : 'Windows/Linux'}</span>
               </div>
 <p className="text-xs text-gray-400">
-                Navigation shortcuts work immediately. Action shortcuts show helpful info messages. Alt key combinations avoid browser conflicts.
+                Navigation shortcuts work immediately. Action shortcuts are fully functional with contextual feedback. Alt key combinations avoid browser conflicts.
               </p>
             </div>
 
@@ -125,9 +125,9 @@ const shortcutCategories = [
                               Soon
                             </span>
                           )}
-                          {shortcut.info && (
-                            <span className="px-2 py-0.5 text-xs bg-info/20 text-info rounded-full">
-                              Info
+                          {shortcut.contextual && (
+                            <span className="px-2 py-0.5 text-xs bg-warning/20 text-warning rounded-full">
+                              Contextual
                             </span>
                           )}
                         </div>
@@ -155,7 +155,8 @@ const shortcutCategories = [
 <ul className="text-sm text-gray-300 space-y-1">
                     <li>• Press <kbd className="px-1 py-0.5 text-xs bg-gray-800 rounded">?</kbd> anytime to toggle this help overlay</li>
                     <li>• Navigation shortcuts (Alt+H, Alt+T, Alt+P) work from any page</li>
-                    <li>• Action shortcuts provide contextual feedback and guidance</li>
+                    <li>• Creation shortcuts (Alt+N, Alt+Shift+N) open modals on appropriate pages</li>
+                    <li>• Contextual shortcuts provide helpful guidance when items aren't selected</li>
                     <li>• Use <kbd className="px-1 py-0.5 text-xs bg-gray-800 rounded">Esc</kbd> to quickly close dialogs and modals</li>
                   </ul>
                 </div>

@@ -12,7 +12,10 @@ import Error from "@/components/ui/Error";
 import Empty from "@/components/ui/Empty";
 import Tasks from "@/components/pages/Tasks";
 import Button from "@/components/atoms/Button";
+import { useKeyboardShortcuts } from "@/App";
+
 const Projects = () => {
+  const { registerShortcut, unregisterShortcut } = useKeyboardShortcuts();
 const [projects, setProjects] = useState([])
   const [tasks, setTasks] = useState([])
   const [loading, setLoading] = useState(true)
@@ -89,10 +92,18 @@ const handleProjectDeleted = async (projectId) => {
     setIsEditModalOpen(true)
   }
 
-  useEffect(() => {
+useEffect(() => {
     loadData()
   }, [])
 
+  // Register keyboard shortcuts
+  useEffect(() => {
+    registerShortcut('openAddProject', () => setIsAddModalOpen(true));
+    
+    return () => {
+      unregisterShortcut('openAddProject');
+    };
+  }, [registerShortcut, unregisterShortcut]);
   if (loading) return <Loading message="Loading projects..." />
   if (error) return <Error message={error} onRetry={loadData} />
 
